@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <unistd.h>
 
 struct Space {
   uint width;
@@ -29,7 +30,7 @@ void sim(int width, int height)
     space
   };
 
-  while(true) {
+  while(1) {
     // Start simulating from bottom to prevent particles considered for the sim twice
     // Only works as particles currently only fall down
     for (int y = height-1; y >= 0; y--) {
@@ -50,23 +51,23 @@ void sim(int width, int height)
               space[(y+1)*width+x+1] = space[y*width+x];
               space[y*width+x] = temp;
             }
-          }
-        case 2: // Water
-          if (space[(y+1)*width+x] == 0) { // replacing air below
-            space[(y+1)*width+x] = 2;
-            space[y*width+x] = 0;
-          } else if (space[(y+1)*width+x-1] == 0) { // replacing air below and to the left
-            space[(y+1)*width+x-1] = 2;
-            space[y*width+x] = 0;
-          } else if (space[(y+1)*width+x+1] == 0) { // replacing air below and to the right
-            space[(y+1)*width+x+1] = 2;
-            space[y*width+x] = 0;
-          } else if (space[(y*width)+x-1] == 0) { // replacing air to the left if can't go down anywhere
-            space[(y*width)+x-1] = 2;
-            space[y*width+x] = 0;
-          } else if (space[(y*width)+x+1] == 0) { // replacing air to the right if can't go dow anywhere
-            space[(y*width)+x+1] = 2;
-            space[y*width+x] = 0;
+          case 2: // Water
+            if (space[(y+1)*width+x] == 0) { // replacing air below
+              space[(y+1)*width+x] = 2;
+              space[y*width+x] = 0;
+            } else if (space[(y+1)*width+x-1] == 0) { // replacing air below and to the left
+              space[(y+1)*width+x-1] = 2;
+              space[y*width+x] = 0;
+            } else if (space[(y+1)*width+x+1] == 0) { // replacing air below and to the right
+              space[(y+1)*width+x+1] = 2;
+              space[y*width+x] = 0;
+            } else if (space[(y*width)+x-1] == 0) { // replacing air to the left if can't go down anywhere
+              space[(y*width)+x-1] = 2;
+              space[y*width+x] = 0;
+            } else if (space[(y*width)+x+1] == 0) { // replacing air to the right if can't go dow anywhere
+              space[(y*width)+x+1] = 2;
+              space[y*width+x] = 0;
+            }
           }
         }
       }
@@ -86,5 +87,24 @@ void sim(int width, int height)
 
 void display(struct Space screen_space)
 {
-  
+  char pixel;
+  system("clear");
+  for (int y = 0; y < screen_space.height; y++) {
+    for (int x = 0; x < screen_space.width; x++) {
+      switch(screen_space.space[(y*screen_space.width)+x]) {
+      case 1:
+        pixel = 's';
+        break;
+      case 2:
+        pixel = 'w';
+        break;
+      default:
+        pixel = ' ';
+        break;
+      }
+      printf("%c", pixel);
+    }
+    printf("\n");
+  }
+  return;
 }
